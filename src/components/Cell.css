@@ -1,0 +1,111 @@
+.spreadsheet-cell {
+  min-width: 140px;
+  width: 140px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: transparent;
+  cursor: cell;
+  position: relative;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  color: #0f172a;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.spreadsheet-cell:hover {
+  background-color: rgba(15, 23, 42, 0.03) !important;
+  border-color: #cbd5e1;
+}
+
+.spreadsheet-cell.selected {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+  border: 2px solid #0f172a !important;
+  z-index: 5;
+  box-shadow: 0 0 0 1px #0f172a;
+}
+
+.spreadsheet-cell.in-range {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+  border: 1px solid #0f172a !important;
+}
+
+.spreadsheet-cell.in-range.selected {
+  border: 2px solid #0f172a !important;
+  box-shadow: 0 0 0 1px #0f172a;
+  z-index: 10;
+}
+
+.spreadsheet-cell.editing {
+  background-color: white !important;
+  border: 2px solid #3b82f6 !important;
+  z-index: 15;
+  box-shadow: 0 0 0 1px #3b82f6;
+  cursor: text !important;
+}
+
+.spreadsheet-cell.dragging {
+  cursor: crosshair !important;
+}
+
+.spreadsheet-cell.dragging:hover {
+  background-color: rgba(15, 23, 42, 0.06) !important;
+  border-color: #94a3b8 !important;
+}
+
+.cell-content {
+  width: 100%;
+  font-size: 14px;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+/* Style numbers to look more professional */
+.cell-content[data-type="number"] {
+  text-align: right;
+  font-family: 'GeneralSans', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.cell-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #0f172a;
+  font-family: inherit;
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+  cursor: text;
+}
+
+.cell-input:focus {
+  outline: none;
+}
+
+/* Responsive design for cells */
+@media (max-width: 768px) {
+  .spreadsheet-cell {
+    min-width: 110px;
+    width: 110px;
+    min-height: 36px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  
+  .cell-content,
+  .cell-input {
+    font-size: 13px;
+  }
+} 

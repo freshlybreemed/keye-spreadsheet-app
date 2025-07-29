@@ -1,0 +1,638 @@
+.spreadsheet-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #f8f9fb;
+  font-family: 'GeneralSans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  overflow: hidden;
+  position: relative;
+  padding: 8px;
+}
+
+.spreadsheet-grid {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+}
+
+.drag-instructions {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-bottom: 1px solid #bfdbfe;
+  font-size: 10px;
+  color: #1e40af;
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.spreadsheet-grid-content {
+  flex: 1;
+  overflow: auto;
+  width: 100%;
+  position: relative;
+}
+
+/* Header container - sticky vertically only, scrolls horizontally */
+.spreadsheet-header {
+  display: flex;
+  background: #0f172a;
+  border-bottom: 2px solid #475569;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  /* Remove any horizontal sticky behavior */
+}
+
+/* Corner cell - sticky both ways */
+.corner-cell {
+  min-width: 60px;
+  width: 60px;
+  height: 44px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-right: 1px solid #6b7280;
+  border-bottom: 2px solid #475569;
+  flex-shrink: 0;
+  position: sticky;
+  left: 0;
+  z-index: 15;
+}
+
+/* Column headers - scroll horizontally with data, sticky only vertically */
+.column-header {
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  border: 1px solid #6b7280;
+  border-bottom: 2px solid #4b5563;
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  text-align: center;
+  user-select: none;
+  position: relative; /* NOT sticky horizontally */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.column-header:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+  border-color: #9ca3af;
+}
+
+/* Column resize handle */
+.column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  z-index: 2;
+  transition: background-color 0.2s ease;
+}
+
+.column-resize-handle:hover {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.column-resize-handle:active {
+  background: rgba(59, 130, 246, 0.5);
+}
+
+.column-header-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.column-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.column-name-input {
+  background: white !important;
+  border: 2px solid #3b82f6 !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  width: 100% !important;
+  text-align: center !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px #3b82f6 !important;
+}
+
+.add-column-button {
+  min-width: 60px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-right: 1px solid #475569;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 20px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex: 1;
+}
+
+.add-column-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  transform: scale(1.1);
+}
+
+.row-header:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+}
+
+/* Row headers - sticky horizontally only */
+.row-header {
+  min-width: 60px;
+  width: 60px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  border-right: 1px solid #6b7280;
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  user-select: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+}
+
+/* Data rows - normal scroll behavior */
+.spreadsheet-row {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+  width: 100%;
+}
+
+.spreadsheet-row:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+.spreadsheet-row:hover {
+  background-color: #f1f5f9;
+}
+
+.spreadsheet-row:nth-child(even) .row-header {
+  background-color: #f1f5f9;
+}
+
+.spreadsheet-row:nth-child(even) .row-header:hover {
+  background-color: #cbd5e1;
+}
+
+.add-row-container {
+  display: flex;
+  width: 100%;
+  min-height: 40px;
+  align-items: center;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.add-row-button {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.03);
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 2px dashed transparent;
+}
+
+.add-row-button:hover {
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+/* Context Menu Styles */
+.context-menu {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  padding: 4px 0;
+  min-width: 180px;
+  font-size: 14px;
+  z-index: 10000;
+}
+
+.context-menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  color: #374151;
+}
+
+.context-menu-item:hover {
+  background-color: #f3f4f6;
+}
+
+.context-menu-item.danger {
+  color: #dc2626;
+}
+
+.context-menu-item.danger:hover {
+  background-color: #fef2f2;
+}
+
+.context-menu-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 4px 0;
+}
+
+/* Enhanced cell styling for business data */
+.spreadsheet-cell {
+  min-width: 140px;
+  width: 140px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: transparent;
+  cursor: cell;
+  position: relative;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  color: #0f172a;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.spreadsheet-cell:hover {
+  background-color: rgba(15, 23, 42, 0.03);
+  border-color: #cbd5e1;
+}
+
+.spreadsheet-cell.selected {
+  background-color: rgba(15, 23, 42, 0.12) !important;
+  border: 2px solid #0f172a !important;
+  z-index: 5;
+  box-shadow: 0 0 0 1px #0f172a;
+}
+
+.spreadsheet-cell.in-range {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  border: 1px solid #3b82f6 !important;
+  position: relative;
+}
+
+.spreadsheet-cell.in-range::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(147, 197, 253, 0.08) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spreadsheet-cell.in-range.selected {
+  background-color: rgba(15, 23, 42, 0.15) !important;
+  border: 2px solid #0f172a !important;
+  box-shadow: 0 0 0 1px #0f172a, 0 0 0 3px rgba(59, 130, 246, 0.3);
+  z-index: 10;
+}
+
+/* Range selection indicators */
+.spreadsheet-cell.range-start::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  z-index: 15;
+}
+
+.spreadsheet-cell.range-end::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  z-index: 15;
+}
+
+/* Range border effects */
+.spreadsheet-cell.range-top {
+  border-top: 2px solid #3b82f6 !important;
+}
+
+.spreadsheet-cell.range-bottom {
+  border-bottom: 2px solid #3b82f6 !important;
+}
+
+.spreadsheet-cell.range-left {
+  border-left: 2px solid #3b82f6 !important;
+}
+
+.spreadsheet-cell.range-right {
+  border-right: 2px solid #3b82f6 !important;
+}
+
+/* Hover state for draggable cells */
+.spreadsheet-cell.hover-draggable {
+  background-color: rgba(15, 23, 42, 0.12) !important;
+  border-color: #475569 !important;
+  cursor: grab !important;
+}
+
+.spreadsheet-cell.hover-draggable:hover {
+  background-color: rgba(15, 23, 42, 0.15) !important;
+  border-color: #64748b !important;
+}
+
+/* Drag enabled state */
+.spreadsheet-cell.drag-enabled {
+  cursor: grab !important;
+}
+
+.spreadsheet-cell.drag-enabled:active {
+  cursor: grabbing !important;
+}
+
+.spreadsheet-cell.editing {
+  background-color: white !important;
+  border: 2px solid #3b82f6 !important;
+  z-index: 15;
+  box-shadow: 0 0 0 1px #3b82f6;
+  cursor: text !important;
+}
+
+/* @dnd-kit specific styles */
+.spreadsheet-cell.dragging {
+  opacity: 0.3;
+  z-index: 1000;
+  cursor: grabbing !important;
+}
+
+.spreadsheet-cell.drop-target {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  border-color: #22c55e !important;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+/* Drag overlay styles */
+.drag-overlay-range {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transform: rotate(2deg);
+  animation: dragFloat 0.5s ease-in-out infinite alternate;
+}
+
+.drag-overlay-cell {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transform: rotate(1deg);
+  animation: dragFloat 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes dragFloat {
+  from {
+    transform: translateY(0px) rotate(1deg);
+  }
+  to {
+    transform: translateY(-2px) rotate(2deg);
+  }
+}
+
+.cell-content {
+  width: 100%;
+  font-size: 14px;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+/* Style numbers to look more professional */
+.cell-content[data-type="number"] {
+  text-align: right;
+  font-family: 'GeneralSans', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.cell-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #0f172a;
+  font-family: inherit;
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+  cursor: text;
+}
+
+.cell-input:focus {
+  outline: none;
+}
+
+/* Add professional visual indicators */
+.spreadsheet-row:first-child .spreadsheet-cell {
+  font-weight: 600;
+  background-color: #f8fafc;
+}
+
+.spreadsheet-row:last-child {
+  border-bottom: 3px solid #0f172a;
+}
+
+.spreadsheet-row:last-child .spreadsheet-cell {
+  background-color: #f0f9ff;
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .column-header {
+    min-width: 110px;
+    width: 110px;
+    font-size: 12px;
+    height: 40px;
+  }
+  
+  .row-header {
+    width: 60px;
+    min-width: 60px;
+    font-size: 11px;
+    min-height: 36px;
+  }
+  
+  .corner-cell {
+    width: 60px;
+    min-width: 60px;
+    height: 40px;
+  }
+  
+  .spreadsheet-cell {
+    min-width: 110px;
+    width: 110px;
+    min-height: 36px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  
+  .drag-instructions {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+} 
+
+/* Mobile Responsive Enhancements */
+@media (max-width: 768px) {
+  .spreadsheet-container {
+    height: 100vh;
+    height: 100svh; /* Use safe area viewport height on mobile */
+  }
+
+  .spreadsheet-grid-content {
+    /* Enable momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+
+  /* Larger touch targets for mobile */
+  .spreadsheet-cell {
+    min-height: 44px; /* iOS recommended minimum touch target */
+    height: 44px;
+    padding: 8px 16px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .column-header {
+    height: 50px;
+    min-height: 50px;
+    font-size: 13px;
+    /* Still no sticky positioning - let columns scroll */
+  }
+
+  .row-header {
+    height: 44px;
+    min-height: 44px;
+    width: 50px;
+    min-width: 50px;
+    /* Keep sticky positioning for row headers */
+    position: sticky;
+    left: 0;
+    z-index: 12;
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  }
+
+  .corner-cell {
+    height: 50px;
+    width: 50px;
+    min-width: 50px;
+    /* Keep sticky positioning for corner */
+    position: sticky;
+    left: 0;
+    top: 0;
+    z-index: 20; /* Highest z-index for corner */
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  }
+
+  /* Column headers stay sticky vertically but NOT horizontally */
+  .spreadsheet-header {
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    background: #0f172a;
+  }
+
+  /* Hide resize handles on mobile (too small to use) */
+  .column-resize-handle {
+    display: none;
+  }
+
+  /* Improve toolbar for mobile */
+  .toolbar {
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .toolbar-button {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  /* Hide less important toolbar items on small screens */
+  @media (max-width: 480px) {
+    .toolbar-section:nth-child(3), /* Alignment buttons */
+    .toolbar-section:nth-child(5) { /* Color picker */
+      display: none;
+    }
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .spreadsheet-cell {
+    height: 42px;
+    font-size: 15px;
+  }
+
+  .column-header {
+    height: 46px;
+  }
+} 

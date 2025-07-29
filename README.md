@@ -1,5 +1,10 @@
 # Excel-like Spreadsheet Component
 
+[![CI](https://github.com/username/spreadsheet-app/actions/workflows/ci.yml/badge.svg)](https://github.com/username/spreadsheet-app/actions/workflows/ci.yml)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
+
 A comprehensive React-based spreadsheet component that mimics the core functionality of Microsoft Excel or Google Sheets. Built with TypeScript, modern React patterns, and responsive design principles.
 
 ![Spreadsheet Demo](https://via.placeholder.com/800x400?text=Excel-like+Spreadsheet+Demo)
@@ -61,6 +66,28 @@ A comprehensive React-based spreadsheet component that mimics the core functiona
 
 4. **Open in your browser**
    Navigate to `http://localhost:5173`
+
+### Development Commands
+
+```bash
+# Start development server
+npm run dev
+
+# Run tests (watch mode)
+npm test
+
+# Run tests once
+npm run test:run
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run linter
+npm run lint
+
+# Build for production
+npm run build
+```
 
 ### Available Scripts
 
@@ -168,6 +195,29 @@ interface ApiResponse {
   };
 }
 ```
+
+## 🚀 CI/CD Pipeline
+
+The project includes a comprehensive GitHub Actions workflow that:
+
+- **Runs on**: Push to `main`/`master` branches and pull requests
+- **Node.js versions**: Tests against 18.x and 20.x
+- **Pipeline steps**:
+  1. 📋 Linting with ESLint
+  2. 🧪 Test execution with coverage reporting
+  3. 🏗️ Production build verification
+  4. 📊 Coverage artifact upload
+
+### Test Coverage
+
+Test coverage reports are automatically generated and uploaded as artifacts. The project includes comprehensive tests for:
+
+- ✅ **Component Testing**: React component behavior and rendering
+- ✅ **Hook Testing**: Custom hook logic and state management  
+- ✅ **Utility Testing**: Core utility functions and data processing
+- ✅ **Integration Testing**: API service integration and error handling
+
+Current test coverage focuses on core functionality with 57 total tests across all components.
 
 The sample data includes financial information across multiple years with products like:
 - Insight Advisory
