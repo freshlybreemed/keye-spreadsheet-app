@@ -136,32 +136,35 @@ export const inferColumnType = (values: (string | number)[]): string => {
   const nonEmptyValues = values.filter(v => v !== '' && v !== null && v !== undefined);
   if (nonEmptyValues.length === 0) return 'text';
   
-  // Check if all values are numbers
+  // Check for currency first (must have $ symbol)
+  const currencyCount = nonEmptyValues.filter(v => 
+    String(v).match(/^\$[\d,]+\.?\d*$/)
+  ).length;
+  if (currencyCount > nonEmptyValues.length * 0.7) {
+    return 'currency';
+  }
+  
+  // Check for percentages (must have % symbol)
+  const percentCount = nonEmptyValues.filter(v => 
+    String(v).includes('%')
+  ).length;
+  if (percentCount > nonEmptyValues.length * 0.7) {
+    return 'percentage';
+  }
+  
+  // Check if all values are pure numbers
   const numericCount = nonEmptyValues.filter(v => !isNaN(Number(v))).length;
   if (numericCount === nonEmptyValues.length) {
-    // Check if they look like currency
-    const currencyCount = nonEmptyValues.filter(v => 
-      String(v).match(/^\$?[\d,]+\.?\d*$/)
-    ).length;
-    if (currencyCount > nonEmptyValues.length * 0.7) {
-      return 'currency';
-    }
-    
-    // Check if they look like percentages
-    const percentCount = nonEmptyValues.filter(v => 
-      String(v).includes('%')
-    ).length;
-    if (percentCount > nonEmptyValues.length * 0.7) {
-      return 'percentage';
-    }
-    
     return 'number';
   }
   
-  // Check if they look like dates
+  // Check if they look like dates (but exclude simple numbers)
   const dateCount = nonEmptyValues.filter(v => {
-    const date = new Date(String(v));
-    return !isNaN(date.getTime());
+    const str = String(v);
+    // Don't treat pure numbers as dates
+    if (/^\d+\.?\d*$/.test(str)) return false;
+    const date = new Date(str);
+    return !isNaN(date.getTime()) && str.length > 4; // Minimum length to avoid false positives
   }).length;
   if (dateCount > nonEmptyValues.length * 0.7) {
     return 'date';
@@ -177,12 +180,26 @@ export const inferColumnType = (values: (string | number)[]): string => {
   
   // Check if they look like URLs
   const urlCount = nonEmptyValues.filter(v => {
-    try {
-      new URL(String(v).startsWith('http') ? String(v) : `https://${v}`);
-      return true;
-    } catch {
-      return false;
+    const str = String(v);
+    // Must start with http/https OR contain a dot (for domains)
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      try {
+        new URL(str);
+        return true;
+      } catch {
+        return false;
+      }
     }
+    // Check for domain-like patterns (must have dot and valid TLD)
+    if (str.includes('.') && /\.[a-z]{2,}$/i.test(str)) {
+      try {
+        new URL(`https://${str}`);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return false;
   }).length;
   if (urlCount > nonEmptyValues.length * 0.7) {
     return 'url';

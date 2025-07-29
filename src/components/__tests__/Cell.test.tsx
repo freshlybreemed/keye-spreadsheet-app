@@ -69,11 +69,10 @@ describe('Cell', () => {
     const style: CellStyle = {
       bold: true,
       backgroundColor: '#ff0000',
-      textAlign: 'center',
-      width: 200
+      textAlign: 'center'
     }
     
-    const { container } = render(<Cell {...defaultProps} style={style} />)
+    const { container } = render(<Cell {...defaultProps} style={style} width={200} />)
     const cellElement = container.firstChild as HTMLElement
     
     expect(cellElement.style.fontWeight).toBe('bold')

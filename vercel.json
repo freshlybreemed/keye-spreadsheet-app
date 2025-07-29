@@ -1,0 +1,6 @@
+{
+  "installCommand": "npm cache clean --force && rm -rf node_modules package-lock.json && npm install",
+  "buildCommand": "npm run build:vercel",
+  "framework": "vite",
+  "outputDirectory": "dist"
+} 

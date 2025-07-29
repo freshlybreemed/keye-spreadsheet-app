@@ -18,15 +18,31 @@ const initialState: SpreadsheetState = {
 };
 
 export const useSpreadsheet = (initialData?: SpreadsheetData) => {
-  const [state, setState] = useState<SpreadsheetState>(() => ({
-    ...initialState,
-    data: initialData || initialState.data
-  }));
+  const [state, setState] = useState<SpreadsheetState>(() => {
+    const initial = {
+      ...initialState,
+      data: initialData || initialState.data
+    };
+    // Save initial state to history
+    return {
+      ...initial,
+      history: [initial],
+      historyIndex: 0
+    };
+  });
 
   // Save current state to history
   const saveToHistory = useCallback((currentState: SpreadsheetState) => {
+    // Create a clean state to save (without the new state itself in history)
+    const stateToSave = {
+      ...currentState,
+      // Don't include the updated history/historyIndex in the saved state
+      history: currentState.history,
+      historyIndex: currentState.historyIndex
+    };
+    
     const newHistory = currentState.history.slice(0, currentState.historyIndex + 1);
-    newHistory.push({ ...currentState });
+    newHistory.push(stateToSave);
     
     return {
       ...currentState,
